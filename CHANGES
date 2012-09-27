@@ -1,0 +1,4 @@
+Changes for perl module Module::Package
+
+0.03 Aug 15 2012
+- bugfix: was not searching in correct file for version when given nested directories

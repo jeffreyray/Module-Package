@@ -1,0 +1,36 @@
+Module-Package version 0.03
+===========================
+
+See the individual module documentation for more information
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make test
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+   Archive::Tar
+   Cwd
+   ExtUtils::Manifest
+   File::Copy
+   File::Copy::Recursive
+   File::Path
+   Moose
+   MooseX::SemiAffordanceAccessor
+   MooseX::StrictConstructor
+   MooseX::Types
+   String::Random
+
+COPYRIGHT AND LICENCE
+
+   Copyright (c) 2010-2012 Jeffrey Ray Hallock.
+
+
+

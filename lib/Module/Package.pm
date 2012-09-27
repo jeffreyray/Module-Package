@@ -1,11 +1,10 @@
 package Module::Package;
 
-our $VERSION = 0.01;
+our $VERSION = 0.03;
 
 use Moose;
 use MooseX::SemiAffordanceAccessor;
 use MooseX::StrictConstructor;
-use MooseX::Method::Signatures;
 
 use MooseX::Types::Moose qw( Str HashRef );
 
@@ -53,11 +52,13 @@ has 'version_from' => (
 
 
 
-method package ( $path? ) {
+sub package {
+    my ( $self, $path ) = @_;
     $path ||= '..';
     
     
     my $version = $self->_extract_version;
+       
     my $name = $self->name;
     $name =~ s/::/-/g;
     my $package_string = $name . '-' . $version;
@@ -97,6 +98,8 @@ method package ( $path? ) {
     # archive the files
     chdir '..';
     
+    
+    print "archiving $package_string";
     system(qq[tar -cf $package_string.tar $package_string]);
     system(qq[gzip $package_string.tar]);
     
@@ -108,25 +111,21 @@ method package ( $path? ) {
     remove_tree( qq[$path/$tmpdir] );
 }
 
-method _extract_version ( ) {
-    
+sub _extract_version {
+    my ( $self ) = @_;
     my $name = $self->name;
     
     my $version_from = $self->version_from;
     
     my ( $path, $file ) = 
-    $version_from =~ /(.*)\/(.*)/ ?
+    $version_from =~ /(.*?)\/(.*)/ ?
     ( $1, $2 ) :
     ( 'lib', $version_from );
     
+    require $version_from;
+    
     my $version;
-    
     eval qq[
-        use lib '$path';        
-    ] if $path;
-    
-    eval qq[
-        use $name;
         \$version = \$${name}::VERSION;
     ];
     
@@ -136,7 +135,8 @@ method _extract_version ( ) {
     return $version;
 }
 
-method _write_makefile ( ) {
+sub _write_makefile ( ) {
+    my ( $self ) = @_;
     open my $MAKEFILE, '>Makefile.PL'
         or die "could not open Makefile.PL for writing";
     flock $MAKEFILE, 2;
